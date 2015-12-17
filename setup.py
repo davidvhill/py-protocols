@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='py-protocols',
-    version='0.0.0',
+    version='1.0.0',
     author='Vojta Orgon',
     author_email='villlem@gmail.com',
     url='https://github.com/villlem/py-protocols',
