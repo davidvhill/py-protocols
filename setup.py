@@ -2,6 +2,8 @@ from setuptools import setup
 
 setup(
     name='py-protocols',
+    description='Absraction separation tool for python. Inspired by clojure protocols',
+    license='MIT',
     version='1.0.0',
     author='Vojta Orgon',
     author_email='villlem@gmail.com',
@@ -14,7 +16,4 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
     ],
-    zip_safe=False,
-    install_requires=[],
-    entry_points={},
 )
