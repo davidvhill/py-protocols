@@ -13,7 +13,7 @@ Define protocol (abstraction, API) and register implementation on some type late
 ...     bar='test bar function',
 ... )
 
->>> protocols.is_implemented(int)
+>>> protocols.is_implemented(AProtocol, int)
 ... False
 
 >> protocols.register(AProtocol,
@@ -22,7 +22,7 @@ Define protocol (abstraction, API) and register implementation on some type late
 ...     bar=lambda _: 'bar on int',
 ... )
 
->>> protocols.is_implemented(int)
+>>> protocols.is_implemented(AProtocol, int)
 ... True
 
 >> protocols.register(AProtocol,
