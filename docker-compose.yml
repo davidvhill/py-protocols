@@ -1,0 +1,7 @@
+tests:
+    entrypoint:
+        - py.test
+        - /src
+    image: villlem.develstack.py-protocols/tester:latest
+    volumes:
+        - .:/src
