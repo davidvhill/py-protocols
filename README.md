@@ -4,52 +4,46 @@ Py protocols
 Define protocol (abstraction, API) and register implementation on some type later.
 
 ```python
->>> import py_protocols as protocols
+import py_protocols as protocols
 
->>> AProtocol = protocols.define(
-...     "Some test protocol",
-...     foo='test foo function',
-...     bar='test bar function',
-... )
+AProtocol = protocols.define(
+    "Some test protocol",
+    foo='test foo function',
+    bar='test bar function',
+)
 
->>> protocols.is_implemented(AProtocol, int)
-False
+assert protocols.is_implemented(AProtocol, int) == False
 
->>> protocols.register(AProtocol,
-...     type=int,
-...     foo=lambda _: 'foo on int',
-...     bar=lambda _: 'bar on int',
-... )
+protocols.register(AProtocol,
+    type=int,
+    foo=lambda _: 'foo on int',
+    bar=lambda _: 'bar on int',
+)
 
->>> protocols.is_implemented(AProtocol, int)
-True
+assert protocols.is_implemented(AProtocol, int) == True
 
->>> protocols.register(AProtocol,
-...     type=float,
-...     foo=lambda _: 'foo on double',
-...     bar=lambda _: 'bar on double',
-... )
+protocols.register(AProtocol,
+    type=float,
+    foo=lambda _: 'foo on double',
+    bar=lambda _: 'bar on double',
+)
 
->>> AProtocol.foo(123)
-"foo on int"
+assert AProtocol.foo(123) == "foo on int"
 
->>> AProtocol.bar(123.1)
-"bar on double"
+assert AProtocol.bar(123.1) == "bar on double"
 
->>> class MyClass:
-...     def foo(self):
-...         return "foo on MyClass"
-...
-...     def bar(self):
-...         return "bar on MyClass"
+class MyClass:
+    def foo(self):
+        return "foo on MyClass"
 
->>> protocols.is_implemented(AProtocol, MyClass)
-True
+    def bar(self):
+        return "bar on MyClass"
 
->>> my_instance = MyClass()
+assert protocols.is_implemented(AProtocol, MyClass) == True
 
->>> AProtocol.bar(my_instance)
-"bar on MyClass"
+my_instance = MyClass()
+
+assert AProtocol.bar(my_instance) == "bar on MyClass"
 ```
 
 Rationale
