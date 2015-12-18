@@ -7,43 +7,57 @@ Define protocol (abstraction, API) and register implementation on some type late
 import py_protocols as protocols
 
 AProtocol = protocols.define(
-    "Some test protocol",
-    foo='test foo function',
-    bar='test bar function',
+    "Some test protocol",     # protocol documentation
+    foo='test foo function',  # protocol function and its docstring
+    bar='test bar function',  # function name should be verb
 )
 
+# is implemented test if protocol is implemened for given type
 assert protocols.is_implemented(AProtocol, int) == False
 
-protocols.register(AProtocol,
-    type=int,
-    foo=lambda _: 'foo on int',
-    bar=lambda _: 'bar on int',
+# register some protocol implementation with given type
+protocols.register(
+    protocol=AProtocol,          # implement AProtocol
+    type=int,                    # on type in
+    foo=lambda _: 'foo on int',  # function and its implementation
+    bar=lambda _: 'bar on int',  # all functions has to be implemented
 )
 
 assert protocols.is_implemented(AProtocol, int) == True
 
-protocols.register(AProtocol,
+protocols.register(
+    protocol=AProtocol,
     type=float,
-    foo=lambda _: 'foo on double',
-    bar=lambda _: 'bar on double',
+    foo=lambda number: 'foo on double %.2f' % number,
+    bar=lambda number, divisor: 'bar on double %.2f' % (number/divisor),
 )
 
+# fuction tied wiht int type was called
 assert AProtocol.foo(123) == "foo on int"
 
-assert AProtocol.bar(123.1) == "bar on double"
+# first argumet is passed to registered function at first position
+assert AProtocol.foo(123.1) == "foo on double 123.10"
+
+# any additional argument is passed to registered function a positional ...
+assert AProtocol.bar(123.1, 2) == "bar on double 61.55"
+# ... or named arguments
+assert AProtocol.bar(123.1, divisor=2) == "bar on double 61.55"
 
 class MyClass:
     def foo(self):
         return "foo on MyClass"
 
-    def bar(self):
-        return "bar on MyClass"
+    def bar(self, divisor=2):
+        return "bar with divisor %s on MyClass" % divisor
 
+# protocol can be implemented by implementig protocol methods
 assert protocols.is_implemented(AProtocol, MyClass) == True
 
 my_instance = MyClass()
 
-assert AProtocol.bar(my_instance) == "bar on MyClass"
+assert AProtocol.foo(my_instance) == "foo on MyClass"
+assert AProtocol.bar(my_instance) == "bar with divisor 2 on MyClass"
+assert AProtocol.bar(my_instance, 3) == "bar with divisor 3 on MyClass"
 ```
 
 Rationale
@@ -73,6 +87,7 @@ At the botom `functools.singledispatch` is used to dispatch. This module just pr
 `functools.singledispatch` has to be tied to some implementation. This module allow to create only definition of
 an abstraction and create implementation later.
 
+For now `protocols.define` creates class. But this is only for namespace and docstring. It may be replaced later.
 
 TODO
 ----
