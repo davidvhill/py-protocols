@@ -44,7 +44,7 @@ Define protocol (abstraction, API) and register implementation on some type late
 ...     def bar(self):
 ...         return "bar on MyClass"
 
->>> protocols.is_implemented(MyClass)
+>>> protocols.is_implemented(AProtocol, MyClass)
 ... True
 
 >>> my_instance = MyClass()
