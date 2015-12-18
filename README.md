@@ -6,7 +6,6 @@ Define protocol (abstraction, API) and register implementation on some type late
 ```python
 >>> import py_protocols as protocols
 
-
 >>> AProtocol = protocols.define(
 ...     "Some test protocol",
 ...     foo='test foo function',
@@ -14,28 +13,28 @@ Define protocol (abstraction, API) and register implementation on some type late
 ... )
 
 >>> protocols.is_implemented(AProtocol, int)
-... False
+False
 
->> protocols.register(AProtocol,
+>>> protocols.register(AProtocol,
 ...     type=int,
 ...     foo=lambda _: 'foo on int',
 ...     bar=lambda _: 'bar on int',
 ... )
 
 >>> protocols.is_implemented(AProtocol, int)
-... True
+True
 
->> protocols.register(AProtocol,
-...     type=double,
+>>> protocols.register(AProtocol,
+...     type=float,
 ...     foo=lambda _: 'foo on double',
 ...     bar=lambda _: 'bar on double',
 ... )
 
 >>> AProtocol.foo(123)
-... "foo on int"
+"foo on int"
 
 >>> AProtocol.bar(123.1)
-... "bar on double"
+"bar on double"
 
 >>> class MyClass:
 ...     def foo(self):
@@ -45,12 +44,12 @@ Define protocol (abstraction, API) and register implementation on some type late
 ...         return "bar on MyClass"
 
 >>> protocols.is_implemented(AProtocol, MyClass)
-... True
+True
 
 >>> my_instance = MyClass()
 
 >>> AProtocol.bar(my_instance)
-... "bar on MyClass"
+"bar on MyClass"
 ```
 
 Rationale

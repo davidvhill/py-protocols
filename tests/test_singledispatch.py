@@ -1,8 +1,8 @@
 import pytest
 
-import py_protocols as p
+import py_protocols as protocols
 
-P = p.define(
+MyProtocol = protocols.define(
     "Some test protocol",
     foo='test foo function',
     bar='test bar function',
@@ -13,7 +13,8 @@ P = p.define(
 class ClExplicit():
     '''Explicit protocol implementation.'''
 
-p.register(P,
+protocols.register(
+    protocol=MyProtocol,
     type=ClExplicit,
     foo=lambda _: 1,
     bar=lambda _: 2,
@@ -29,7 +30,8 @@ class ClExplicitInherited(ClExplicit):
 class ClExplicitInheritedOverride(ClExplicit):
     '''Override inherited explicit protocol implementation'''
 
-p.register(P,
+protocols.register(
+    protocol=MyProtocol,
     type=ClExplicitInheritedOverride,
     foo=lambda _: 3,
     bar=lambda _: 4,
@@ -55,7 +57,8 @@ class ClDuckTypeInherited(ClDuckType):
 class ClDuckTypeOverride(ClDuckType):
     '''Explicit override ducktype implementation'''
 
-p.register(P,
+protocols.register(
+    protocol=MyProtocol,
     type=ClDuckTypeOverride,
     foo=lambda _: 7,
     bar=lambda _: 8,
@@ -63,9 +66,9 @@ p.register(P,
 
 
 def test_docstrigns():
-    assert P.__doc__ == "Some test protocol"
-    assert P.foo.__doc__ == 'test foo function'
-    assert P.bar.__doc__ == 'test bar function'
+    assert MyProtocol.__doc__ == "Some test protocol"
+    assert MyProtocol.foo.__doc__ == 'test foo function'
+    assert MyProtocol.bar.__doc__ == 'test bar function'
 
 
 @pytest.mark.parametrize('obj, exp_foo, exp_bar', [
@@ -77,8 +80,48 @@ def test_docstrigns():
     (ClDuckTypeOverride(), 7, 8),
 ])
 def test_dispatch(obj, exp_foo, exp_bar):
-    foo = P.foo(obj)
-    bar = P.bar(obj)
+    foo = MyProtocol.foo(obj)
+    bar = MyProtocol.bar(obj)
     assert foo == exp_foo
     assert bar == exp_bar
 
+
+def test_exapmples():
+    AProtocol = protocols.define(
+        "Some test protocol",
+        foo='test foo function',
+        bar='test bar function',
+    )
+
+    assert protocols.is_implemented(AProtocol, int) == False
+
+    protocols.register(AProtocol,
+        type=int,
+        foo=lambda _: 'foo on int',
+        bar=lambda _: 'bar on int',
+    )
+
+    assert protocols.is_implemented(AProtocol, int) == True
+
+    protocols.register(AProtocol,
+        type=float,
+        foo=lambda _: 'foo on double',
+        bar=lambda _: 'bar on double',
+    )
+
+    assert AProtocol.foo(123) == "foo on int"
+
+    assert AProtocol.bar(123.1) == "bar on double"
+
+    class MyClass:
+        def foo(self):
+            return "foo on MyClass"
+
+        def bar(self):
+            return "bar on MyClass"
+
+    assert protocols.is_implemented(AProtocol, MyClass) == True
+
+    my_instance = MyClass()
+
+    assert AProtocol.bar(my_instance) == "bar on MyClass"
